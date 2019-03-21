@@ -1,0 +1,8 @@
+test:
+  :url: https://query-test.discovery.trln.org/solr/trlnbib
+
+dev:
+  :url: http://your_solr_baseurl
+
+ci:
+  :url: http://your_solr_baseurl

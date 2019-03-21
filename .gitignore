@@ -1,0 +1,21 @@
+## PROJECT
+config/solr.yml
+.bundle
+rdoc
+doc
+.yardoc
+tmp/
+
+## vim
+*.swp
+
+## MAC OS
+.DS_Store
+
+## TextMate
+*.tmproj
+tmtags
+
+## Rubymine
+.idea/*
+/spec/examples.txt
