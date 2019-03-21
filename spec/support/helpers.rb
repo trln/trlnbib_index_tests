@@ -1,3 +1,5 @@
+require 'date'
+
 module Helpers
   # send a GET request to the default Solr request handler with the indicated query
   # @param query [String] the value of the 'q' param to be sent to Solr
@@ -11,6 +13,10 @@ module Helpers
   # @return [RSpecSolr::SolrResponseHash] object for rspec-solr testing the Solr response, with no facets, and only the id and title_245a_display field for each Solr doc
   def solr_resp_ids_titles_from_query(query)
     solr_resp_ids_titles({'q'=> query})
+  end
+
+  def solr_resp(solr_params)
+    solr_response(solr_params)
   end
 
   # send a GET request to the default Solr request handler with the indicated Solr parameters
@@ -27,6 +33,69 @@ module Helpers
   # @return [RSpecSolr::SolrResponseHash] object for rspec-solr testing the Solr response, with no facets, and only the id and short title field for each Solr doc
   def solr_resp_ids_titles(solr_params)
     solr_response(solr_params.merge(doc_ids_titles))
+  end
+
+  def local_scope_duke
+    { 'fq' => 'institution_f:duke' }
+  end
+
+  def local_scope_nccu
+    { 'fq' => 'institution_f:nccu' }
+  end
+
+  def local_scope_ncsu
+    { 'fq' => 'institution_f:ncsu' }
+  end
+
+  def local_scope_unc
+    { 'fq' => 'institution_f:unc' }
+  end
+
+  def all_fields_search_duke(query_str)
+    local_scope_duke.merge({ 'q' => query_str })
+  end
+
+  def all_fields_search_nccu(query_str)
+    local_scope_nccu.merge({ 'q' => query_str })
+  end
+
+  def all_fields_search_ncsu(query_str)
+    local_scope_ncsu.merge({ 'q' => query_str })
+  end
+
+  def all_fields_search_unc(query_str)
+    local_scope_unc.merge({ 'q' => query_str })
+  end
+
+  def subject_search_duke(query_str)
+    local_scope_duke.merge(subject_search_args(query_str))
+  end
+
+  def subject_search_nccu(query_str)
+    local_scope_nccu.merge(subject_search_args(query_str))
+  end
+
+  def subject_search_ncsu(query_str)
+    local_scope_ncsu.merge(subject_search_args(query_str))
+  end
+
+  def subject_search_unc(query_str)
+    local_scope_unc.merge(subject_search_args(query_str))
+  end
+
+  def subject_search_args(query_str)
+    { 'q' => query_str, 'qf' => '${subject_qf}', 'pf' => '${subject_pf}', 'bq' => subject_bq(query_str), 'bf' => subject_bf }
+  end
+
+  def subject_bq(query_str)
+    "title_main_indexed_t:(#{query_str})^500, language_f:English^10000"
+  end
+
+  def subject_bf
+    current_year = Date.today.year
+    current_year_plus_two = current_year + 2
+    current_year_minus_ten = current_year - 10
+    "linear(map(publication_year_isort,#{current_year_plus_two},10000,#{current_year_minus_ten},abs(publication_year_isort)),11,0)^100"
   end
 
 
