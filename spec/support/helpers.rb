@@ -88,7 +88,7 @@ module Helpers
   end
 
   def subject_bq(query_str)
-    "title_main_indexed_t:(#{query_str})^500, language_f:English^10000"
+    "title_main_indexed_t:(#{query_str})^500, language_f:English^10000, resource_type_f:Book"
   end
 
   def subject_bf
