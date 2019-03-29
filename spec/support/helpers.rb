@@ -84,18 +84,24 @@ module Helpers
   end
 
   def subject_search_args(query_str)
-    { 'q' => query_str, 'qf' => '${subject_qf}', 'pf' => '${subject_pf}', 'bq' => subject_bq(query_str), 'bf' => subject_bf }
+    { 'q' => "{!edismax qf=$subject_qf pf=$subject_pf}#{query_str}",
+      'bq' => subject_bq(query_str),
+      'bf' => subject_bf,
+      'defType' => 'lucene',
+      'pf3' => "genre_headings_ara_v^15 genre_headings_cjk_v^15 genre_headings_rus_v^15 genre_headings_t^35 genre_headings_tl^150 genre_headings_tp^50 subject_headings_ara_v^15 subject_headings_cjk_v^15 subject_headings_remapped_t^35 subject_headings_remapped_tl^150 subject_headings_remapped_tp^50 subject_headings_rus_v^15 subject_headings_t^35 subject_headings_tl^150 subject_headings_tp^50",
+      'pf2' => "genre_headings_ara_v^5 genre_headings_cjk_v^5 genre_headings_rus_v^5 genre_headings_t^30 genre_headings_tl^100 genre_headings_tp^40 subject_headings_ara_v^5 subject_headings_cjk_v^5 subject_headings_remapped_t^30 subject_headings_remapped_tl^100 subject_headings_remapped_tp^40 subject_headings_rus_v^5 subject_headings_t^30 subject_headings_tl^100 subject_headings_tp^40"
+    }
   end
 
   def subject_bq(query_str)
-    "title_main_indexed_t:(#{query_str})^500, language_f:English^10000, resource_type_f:Book"
+    "title_main_indexed_t:(#{query_str})^500 language_f:English^10000 resource_type_f:Book^100"
   end
 
   def subject_bf
     current_year = Date.today.year
     current_year_plus_two = current_year + 2
     current_year_minus_ten = current_year - 10
-    "linear(map(publication_year_isort,#{current_year_plus_two},10000,#{current_year_minus_ten},abs(publication_year_isort)),11,0)^100"
+    "linear(map(publication_year_isort,#{current_year_plus_two},10000,#{current_year_minus_ten},abs(publication_year_isort)),11,0)^50"
   end
 
 
@@ -107,7 +113,7 @@ module Helpers
   # @return [RSpecSolr::SolrResponseHash] object for rspec-solr testing the Solr response
   def solr_response(solr_params, req_handler='select')
     q_val = solr_params['q']
-    RSpecSolr::SolrResponseHash.new(solr_conn.send_and_receive(req_handler, {:method => :get, :params => solr_params.merge("testing"=>"trlnbib_index_testing")}))
+    RSpecSolr::SolrResponseHash.new(solr_conn.send_and_receive(req_handler, {:method => :get, :params => solr_params.merge("testing"=>"trlnbib_index_testing", "rows" => "20")}))
   end
 
   # use these Solr HTTP params to reduce the size of the Solr responses

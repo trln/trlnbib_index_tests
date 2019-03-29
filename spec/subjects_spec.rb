@@ -28,4 +28,29 @@ describe 'Subjects' do
       expect((english_results_count.to_f/count)).to be > 0.75
     end
   end
+
+  context 'NCSU filterd query with united states civil war history' do
+    let(:resp) do
+      solr_resp_doc_ids_only(subject_search_ncsu('united states civil war history').merge('fq' => 'location_hierarchy_f:ncsu'))
+    end
+
+    it 'the results should not include a book about civil rights' do
+      expect(resp).not_to include('NCSU4412933').in_first(20)
+    end
+  end
+
+  context 'united states history civil war' do
+    let(:resp) do
+      solr_resp(subject_search_duke('united states civil war history').merge('fl' => 'id,subject_headings_a'))
+    end
+
+    let(:subject_matchers) do
+      /(Civil War, 1861-1865|Civil War Period \(1850-1877\)|Civil war -- History -- 19th century|American Civil War \(1861-1865\))/i
+    end
+
+    it 'relevant subject headings should be present in all of the first 20 results' do
+      expect(resp).to include(
+        'subject_headings_a' => subject_matchers).in_each_of_first(20).documents
+    end
+  end
 end
