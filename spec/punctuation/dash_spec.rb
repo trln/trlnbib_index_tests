@@ -13,7 +13,7 @@ describe 'dashes' do
     end
 
     it 'the query should succeed if the dash is present' do
-      resp = solr_resp_ids_from_query 'utopian and antiutopian fiction'
+      resp = solr_resp_ids_from_query 'utopian and anti-utopian fiction'
       expect(resp).to include('DUKE008670706')
     end
   end
