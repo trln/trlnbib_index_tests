@@ -1,5 +1,5 @@
 test:
-  :url: https://query-test.discovery.trln.org/solr/trlnbib
+  :url: https://query.discovery.trln.org/trlnbib202002
 
 dev:
   :url: http://your_solr_baseurl
