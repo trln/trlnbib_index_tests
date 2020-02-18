@@ -21,4 +21,13 @@ describe 'All Fields' do
       expect(resp).to include(%w[DUKE001357733 DUKE004063454]).in_first(4)
     end
   end
+
+  context 'nonsense buivcoxpoviuocpxjklrtre query' do
+    it 'returns no results' do
+      resp = solr_resp(
+        q: 'buivcoxpoviuocpxjklrtre'
+      )
+      expect(resp).not_to have_documents
+    end
+  end
 end
