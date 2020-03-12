@@ -32,4 +32,38 @@ describe 'Subjects' do
       expect((english_results_count.to_f / count)).to be > 0.75
     end
   end
+
+  context 'subject search nativism' do
+    let(:resp) do
+      solr_resp(subject_search_duke('nativism'))
+    end
+
+    let(:docs) do
+      resp['response']['docs']
+    end
+
+    it 'all documents should have subject heading nativism' do
+      count = docs.count
+      subjects = docs.flat_map { |d| d.fetch('subject_headings_a', nil) }.compact
+      subject_count = subjects.select { |s| s.include?('Nativism')}.count
+      expect(count - subject_count).to be 0
+    end
+  end
+
+  context 'subject search serging' do
+    let(:resp) do
+      solr_resp(subject_search_duke('serging'))
+    end
+
+    let(:docs) do
+      resp['response']['docs']
+    end
+
+    it 'all documents should have subject heading serging' do
+      count = docs.count
+      subjects = docs.flat_map { |d| d.fetch('subject_headings_a', nil) }.compact
+      subject_count = subjects.select { |s| s.include?('Serging')}.count
+      expect(count - subject_count).to be 0
+    end
+  end
 end
